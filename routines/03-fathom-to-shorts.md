@@ -31,7 +31,7 @@ If already authorized, skip.
 
 1. Click **Run Now** (assuming you've done a Laser Coaching or AI Mastermind call recently)
 2. Wait ~3-5 minutes
-3. Check the #content-reports Slack channel
+3. Check the #content Slack channel
 4. You should see one message with all 5 scripts inline (hook, body, CTA, source quote, timestamp for each)
 5. Copy any one out when you're ready to film
 
@@ -48,7 +48,7 @@ Read reference/voice.md, reference/short-form-tone.md, and reference/niche.md fi
 
 Use the Fathom MCP to list recent meetings (last 48 hours). Find the most recent recording whose title contains "Laser Coaching" OR "AI Mastermind".
 
-If no matching recording exists in the last 48 hours, post via Slack MCP to #content-reports: "📞 No new coaching call found in the last 48 hours. Skipping today's run." Then exit cleanly. Do not error.
+If no matching recording exists in the last 48 hours, post via Slack MCP to #content: "📞 No new coaching call found in the last 48 hours. Skipping today's run." Then exit cleanly. Do not error.
 
 If a recording exists, pull the full transcript via Fathom MCP get_meeting_transcript.
 
@@ -69,7 +69,7 @@ For each surviving moment, write a 30-60 sec short-form script in my voice (use 
 - Timestamp: mm:ss if available
 - Moment type: A/B/C/D/E
 
-Post all scripts to Slack via Slack MCP. Channel: #content-reports. Format:
+Post all scripts to Slack via Slack MCP. Channel: #content. Format:
 
 🎬 *5 New Short-Form Scripts*
 *Source:* [Call Type] - [Date]

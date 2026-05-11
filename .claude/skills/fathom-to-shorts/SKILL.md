@@ -110,7 +110,7 @@ Keep total script length to 30-60 seconds spoken at normal pace (roughly 80-150 
 
 ## Step 6: Post scripts to Slack
 
-Use the Slack MCP (Connectors UI handles auth). Channel: `#content-reports`.
+Use the Slack MCP (Connectors UI handles auth). Channel: `#content`.
 
 Post a single Slack message formatted as follows. Keep the full scripts inline so the coach can read them right in Slack and copy any one out when ready to film.
 

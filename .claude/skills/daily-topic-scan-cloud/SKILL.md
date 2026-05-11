@@ -103,7 +103,7 @@ Before finalizing the ranked list, apply these filters:
 
 ## Step 4: Post summary to Slack
 
-Use the Slack MCP (channel: #content-reports) env var. Format the message:
+Use the Slack MCP (channel: #content) env var. Format the message:
 
 ```
 📡 *Daily Topic Scan — [Date]*
@@ -132,7 +132,7 @@ Don't crash, don't retry mid-run. Daily cadence means tomorrow's run is the safe
 
 - `YOUTUBE_API_KEY` — YouTube Data API v3 key (get from Google Cloud Console)
 - `XAI_API_KEY` — Grok / xAI API key (optional, will skip X source if not set)
-- `Slack MCP (channel: #content-reports)` — Slack incoming webhook for the channel to post to
+- `Slack MCP (channel: #content)` — Slack incoming webhook for the channel to post to
 
 ## Schedule recommendation
 

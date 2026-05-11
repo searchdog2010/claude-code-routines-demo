@@ -45,7 +45,7 @@ You need two API keys for this Routine:
 
 1. Click **Run Now** to test before waiting for tomorrow's 7am fire
 2. Wait ~2-3 minutes
-3. Check the #content-reports Slack channel for the morning summary
+3. Check the #content Slack channel for the morning summary
 4. If anything looks off, check the Routine logs in the dashboard
 
 ---
@@ -72,7 +72,7 @@ Synthesize signals into the top 5 ranked content ideas for today. For each:
 
 Apply quality filters: cut anything <5K total views, cut anything covered to death in last 30 days, boost anything appearing in 2+ sources.
 
-Post a summary to Slack via the Slack MCP. Channel: #content-reports. Format:
+Post a summary to Slack via the Slack MCP. Channel: #content. Format:
 
 📡 *Daily Topic Scan — [Date]*
 
