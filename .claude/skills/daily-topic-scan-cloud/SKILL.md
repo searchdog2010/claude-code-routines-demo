@@ -17,25 +17,45 @@ Read these reference files first:
 
 ## Step 1: Pull from 4 sources in parallel
 
-### Source A: YouTube Data API (4 searches)
+### Source A: YouTube Data API (3 cheap calls)
 
-Use the YOUTUBE_API_KEY env var. Search YouTube for trending videos in the niche.
+Use the YOUTUBE_API_KEY env var. Quota-aware approach. The YouTube Data API gives you 10,000 units/day. `search.list` costs 100 units per call (expensive). Use cheaper endpoints instead.
 
-Run 4 searches based on the niche file's "Search terms my audience would use" section. Examples:
-- Search term 1 + "2026"
-- Search term 2 + "2026"
-- Search term 3 + "2026"
-- Search term 4 + "2026"
+Pick the SINGLE most important search query from the niche file's "Search terms my audience would use" (or use the first 2 if quota permits). For each query:
 
-For each, pull top 10 results sorted by view count, filtered to last 7 days. Capture: title, channel name, view count, channel subscriber count, video URL.
+1. Call `search.list` ONCE per query (max 2 queries total) with `order=viewCount`, `publishedAfter=last 7 days`, `maxResults=10`. Cost: 100 units per call.
+2. For the top 10 video IDs returned, call `videos.list` ONCE batched with all IDs in `id=` (comma-separated). Cost: 1 unit total.
+
+That's 100-200 units per run, leaving plenty of room in the 10K daily quota.
+
+If `search.list` returns `quotaExceeded` (HTTP 403, error reason `quotaExceeded`): skip YouTube for this run, note in the report "YouTube quota exceeded today, skipped." Don't fail the whole Routine.
+
+Capture: title, channel name, view count, channel subscriber count, video URL.
 
 ### Source B: X / Twitter via Grok API
 
 Use XAI_API_KEY env var. Hit the Grok API to find trending posts in the niche.
 
-Prompt to Grok: "What are the top 5 most-discussed posts on X in the last 24 hours about [niche topic areas from niche-example.md]. Return: post text, author, engagement count, post URL."
+Endpoint: `POST https://api.x.ai/v1/chat/completions`
 
-If XAI_API_KEY isn't set, skip this source and note "X source skipped (no XAI_API_KEY)" in the report.
+Headers:
+- `Authorization: Bearer ${XAI_API_KEY}`
+- `Content-Type: application/json`
+
+Body:
+```json
+{
+  "model": "grok-4-fast-non-reasoning",
+  "messages": [
+    {"role": "user", "content": "What are the top 5 most-discussed posts on X (Twitter) in the last 24 hours about [niche topic areas from niche.md]? For each, return: post text (first 200 chars), author handle, approximate engagement (likes + retweets), and post URL. Return as a JSON array."}
+  ],
+  "max_tokens": 1500
+}
+```
+
+Note the model name: **grok-4-fast-non-reasoning**. The old `grok-beta` model is deprecated.
+
+If XAI_API_KEY isn't set, or the call returns an error, skip this source and note "X source skipped" in the report. Don't fail the whole Routine.
 
 ### Source C: GitHub Trending
 

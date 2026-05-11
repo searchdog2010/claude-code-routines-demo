@@ -58,8 +58,8 @@ Run the daily-topic-scan-cloud skill in this repo.
 Read reference/niche.md and reference/voice.md first for context.
 
 Pull from 4 sources in parallel:
-- YouTube Data API (use YOUTUBE_API_KEY env var): 4 searches based on my niche topics, top 10 results each, last 7 days
-- X/Twitter via Grok (use XAI_API_KEY env var, skip if not set): top 5 trending posts in my niche, last 24 hours
+- YouTube Data API (use YOUTUBE_API_KEY env var): Pick the 1-2 most important search queries from my niche.md. For each, call search.list (cost 100 units) with order=viewCount, publishedAfter=last 7 days, maxResults=10. Then ONE batched videos.list call (cost 1 unit) for all returned video IDs. Total cost: ~200 units. If 403 quotaExceeded, skip YouTube and note in the report. Do not fail the Routine.
+- X/Twitter via Grok (use XAI_API_KEY env var, skip if not set): POST to https://api.x.ai/v1/chat/completions with model="grok-4-fast-non-reasoning" (NOT grok-beta, that's deprecated). Ask for top 5 trending posts in my niche, last 24 hours, returned as JSON. If error, skip and note in the report.
 - GitHub trending (no key): WebFetch github.com/trending?since=daily, pull top 5 AI/automation repos
 - WebSearch: 5 queries based on my niche topics, read top 3 results each
 
