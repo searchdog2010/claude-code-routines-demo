@@ -1,0 +1,33 @@
+# Secrets — never commit
+.env
+.env.local
+*.pem
+*.key
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor junk
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python (if anyone adds Python scripts)
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+env/
+
+# Node (if anyone adds JS)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Routine run output (if any local testing)
+test-output/
+*.log
