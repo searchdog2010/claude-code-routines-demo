@@ -28,7 +28,7 @@ Filter to find the most recent recording matching the call type filters (configu
 
 If multiple matches today, pick the most recent.
 
-If zero matches in the last 48 hours: Slack `📞 Fathom-to-Shorts: no new coaching call found in the last 48 hours. Skipping today's run.` and exit cleanly. Not an error.
+If zero matches in the last 7 days: Slack `📞 Fathom-to-Shorts: no new coaching call found in the last 7 days. Skipping today's run.` and exit cleanly. Not an error.
 
 ## Step 2: Pull the full transcript
 
