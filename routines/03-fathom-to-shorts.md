@@ -46,11 +46,17 @@ Fathom into Short-Form Scripts. Be strictly directive. Run in exact order. Stop 
 
 STEP 1: Use the Fathom MCP list_meetings tool. Filter to the last 7 days.
 
-STEP 2: EARLY EXIT CHECK. Look at the returned meetings. Find ones whose title contains "Laser Coaching" OR "AI Mastermind".
-  - If ZERO matches: Post via Slack MCP to channel #content: "🎬 No new coaching call found in the last 7 days (Laser Coaching or AI Mastermind). Skipping today's run."
-  - STOP. Return success. Do not query anything else. Do not retry.
+STEP 2: EARLY EXIT CHECK (no calls). Look at the returned meetings. Find ones whose title contains "Laser Coaching" OR "AI Mastermind".
+  - If ZERO matches: Post via Slack MCP to channel #content: "🎬 No new coaching call found in the last 7 days. Skipping today's run."
+  - STOP. Return success.
 
-STEP 3: If matches exist, pull the full transcript via Fathom MCP get_meeting_transcript using the MOST RECENT matching recording_id only. Do not process older matches.
+STEP 3: Identify the MOST RECENT matching recording_id. Note that ID for the dedup check below.
+
+STEP 4: DEDUP CHECK. Use the Slack MCP to read the last 50 messages in channel #content. Look for a message containing the string "Recording ID: <that_recording_id>".
+  - If found: This call has already been processed. Post via Slack MCP to channel #content: "🎬 Most recent call (recording_id <id>) already has scripts in this channel. Skipping."
+  - STOP. Return success.
+
+STEP 5: If not previously processed, pull the full transcript via Fathom MCP get_meeting_transcript using that recording_id.
 
 Read the entire transcript. Find 5 standout moments matching patterns A-E from the skill:
 - A. Member question + my answer
@@ -69,10 +75,11 @@ For each surviving moment, write a 30-60 sec short-form script in my voice (use 
 - Timestamp: mm:ss if available
 - Moment type: A/B/C/D/E
 
-Post all scripts to Slack via Slack MCP. Channel: #content. Format:
+Post all scripts to Slack via Slack MCP. Channel: #content. Format (IMPORTANT: the "Recording ID:" line is required for dedup on future runs):
 
 🎬 *5 New Short-Form Scripts*
 *Source:* [Call Type] - [Date]
+Recording ID: [recording_id from Fathom]
 
 *Script 1: [Working title]*
 > Hook: [hook]

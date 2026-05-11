@@ -26,9 +26,19 @@ Filter to find the most recent recording matching the call type filters (configu
 - Default: title contains "Laser Coaching" OR "AI Mastermind"
 - Coach can configure: title contains "[their call name]"
 
-If multiple matches today, pick the most recent.
+If multiple matches in the 7-day window, pick the most recent.
 
 If zero matches in the last 7 days: Slack `📞 Fathom-to-Shorts: no new coaching call found in the last 7 days. Skipping today's run.` and exit cleanly. Not an error.
+
+## Step 1.5: Dedup check (skip if already processed)
+
+Use the Slack MCP `read_channel` tool on the target channel (#content for Ron) to read the last 50 messages. Look for a string `Recording ID: <selected_recording_id>` in any prior message.
+
+If found: this recording has already been processed. Post `🎬 Most recent call (recording_id X) already has scripts in this channel. Skipping.` and exit.
+
+This dedup is what allows the lookback window to be wider than the firing schedule without spamming duplicate scripts.
+
+The Slack message format in Step 6 must include the line `Recording ID: <id>` for future dedup checks to work.
 
 ## Step 2: Pull the full transcript
 
@@ -114,9 +124,12 @@ Use the Slack MCP (Connectors UI handles auth). Channel: `#content`.
 
 Post a single Slack message formatted as follows. Keep the full scripts inline so the coach can read them right in Slack and copy any one out when ready to film.
 
+The `Recording ID:` line at the top is REQUIRED. The dedup check in Step 1.5 looks for that string on future runs to skip already-processed calls.
+
 ```
 🎬 *5 New Short-Form Scripts*
 *Source:* [Call Type] - [Date]
+Recording ID: <recording_id from Fathom>
 
 *Script 1: [Working title]*
 > Hook: [hook]
