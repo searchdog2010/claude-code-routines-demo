@@ -42,15 +42,15 @@ If no matching call exists in the last 48 hours, the Routine will Slack you "no 
 ## Routine prompt (copy-paste)
 
 ```
-Run the fathom-to-shorts skill in this repo.
+Fathom into Short-Form Scripts. Be strictly directive. Run in exact order. Stop the moment an exit condition fires.
 
-Read reference/voice.md, reference/short-form-tone.md, and reference/niche.md first.
+STEP 1: Use the Fathom MCP list_meetings tool. Filter to last 48 hours.
 
-Use the Fathom MCP to list recent meetings (last 48 hours). Find the most recent recording whose title contains "Laser Coaching" OR "AI Mastermind".
+STEP 2: EARLY EXIT CHECK. Look at the returned meetings. Find ones whose title contains "Laser Coaching" OR "AI Mastermind".
+  - If ZERO matches: Post via Slack MCP to channel #content: "🎬 No new coaching call found in the last 48 hours (Laser Coaching or AI Mastermind). Skipping today's run."
+  - STOP. Return success. Do not query anything else. Do not retry. Do not search older meetings.
 
-If no matching recording exists in the last 48 hours, post via Slack MCP to #content: "📞 No new coaching call found in the last 48 hours. Skipping today's run." Then exit cleanly. Do not error.
-
-If a recording exists, pull the full transcript via Fathom MCP get_meeting_transcript.
+STEP 3: If a match exists, pull the full transcript via Fathom MCP get_meeting_transcript using the most recent matching recording_id.
 
 Read the entire transcript. Find 5 standout moments matching patterns A-E from the skill:
 - A. Member question + my answer

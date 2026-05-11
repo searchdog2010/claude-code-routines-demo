@@ -77,27 +77,37 @@ If you have no calls today, the Routine will Slack you "no calls booked, skippin
 ## Routine prompt (copy-paste)
 
 ```
-Run the pre-call-brief skill in this repo.
+Pre-Call Sales Brief. Be strictly directive. Run these steps in exact order. Stop the moment an exit condition fires.
 
-Read reference/voice.md and reference/niche.md for context first.
+STEP 1: Query GHL Calendar Events API for today's bookings.
+GET https://services.leadconnectorhq.com/calendars/events
+Headers: Authorization: Bearer ${GHL_API_KEY}, Version: 2021-07-28
+Query params: locationId=${GHL_LOCATION_ID}, calendarId=<one of SALES_CALENDAR_IDS>, startTime=<today 00:00 in epoch ms>, endTime=<today 23:59 in epoch ms>.
+Make one query per calendar in SALES_CALENDAR_IDS (comma-separated).
 
-Use the GHL Calendar Events API to find today's bookings on these calendars (comma-separated in SALES_CALENDAR_IDS env var). Authentication via GHL_API_KEY (Bearer) and GHL_LOCATION_ID headers. Version header: 2021-07-28.
+STEP 2: EARLY EXIT CHECK. If the combined event count across all calendars is 0:
+  - Post via Slack MCP to channel #sales-briefs: "📞 No sales calls booked today (YYYY-MM-DD). Skipping brief generation."
+  - STOP. Return success. Do not query anything else. Do not retry. Do not "verify" the result.
 
-For each booked contact today:
-1. Pull their full GHL contact profile (tags, custom fields, source, date added)
-2. Pull the custom field schema once (caches labels for the run)
-3. Pull their conversation history (last 10 conversations, 20 messages each)
-4. Classify status as HOT (paid member), WARM (lead with intake or in nurture), or COLD (brand new)
-5. Build a one-page brief with: status, key tags, intake form highlights (prioritize strategic fields like budget, goal, revenue), recent notable messages (skip booking-confirmation boilerplate), and a tailored suggested approach
-6. Post all briefs to Slack as one message via Slack MCP, channel #sales-briefs
+STEP 3: If the event count is >0, proceed:
+For each booked contact:
+  - GET https://services.leadconnectorhq.com/contacts/{contactId} (tags, custom fields, source, dateAdded)
+  - GET https://services.leadconnectorhq.com/locations/{locationId}/customFields?model=contact (once, cache labels)
+  - GET https://services.leadconnectorhq.com/conversations/search?locationId={loc}&contactId={cid}&limit=10
+  - For each conversation: GET /conversations/{convId}/messages?limit=20
 
-If zero calls today: Slack "No sales calls booked today" and exit.
+STEP 4: Classify each contact (HOT/WARM/COLD per skill rules) and build their brief following the skill's format.
 
-If a contact fetch fails: skip that contact, continue with the others, note the skip count.
+STEP 5: Post ALL briefs as ONE Slack message via Slack MCP to channel #sales-briefs. Title: "📋 Sales Briefs - YYYY-MM-DD (N calls today)". One brief per call, in chronological order.
 
-Use the priority fields and approach heuristics defined in the skill. Don't fabricate intake answers if they don't exist. For sparse-data contacts, the brief should still be useful by recommending full discovery.
+STEP 6: Done. Stop.
 
-Quality bar: surface what the coach would have forgotten. Tags, the specific obstacle from the intake form, the date of last contact, any "no show" flags. The brief is most valuable when it catches the thing you'd have missed.
+Hard rules:
+- Read reference/voice.md and reference/niche.md ONCE at the start for context. Do not re-read them per contact.
+- If any single contact fetch fails, skip that contact and continue. Do not retry.
+- If the GHL calendar query returns 401, post error to Slack and stop. Do not retry.
+- Do not exceed 10 API calls per contact total.
+- The whole Routine should complete in under 3 minutes for typical days.
 ```
 
 ## Env vars
